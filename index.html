@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BikeScore — Complete Motorcycle Comparison</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <circle cx="5" cy="17" r="3"/>
+                    <circle cx="19" cy="17" r="3"/>
+                    <path d="M5 17h4l2-5h4l2 5h2"/>
+                    <path d="M9 12l2-5h2"/>
+                    <circle cx="12" cy="7" r="1.5"/>
+                </svg>
+                <span class="logo-text">BikeScore</span>
+            </div>
+            <p class="tagline">Complete Motorcycle Comparison Tool — All Specs, All Methods</p>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Left Panel: Bike Input -->
+            <section class="panel bikes-panel">
+                <div class="panel-header">
+                    <h2>Your Motorcycles</h2>
+                    <div class="header-actions">
+                        <button class="btn-ai" id="aiImportBtn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2a4 4 0 014 4c0 1.1-.9 2-2 2h-4a2 2 0 01-2-2 4 4 0 014-4z"/>
+                                <path d="M8 8v8a4 4 0 004 4 4 4 0 004-4V8"/>
+                                <path d="M8 14h8"/>
+                            </svg>
+                            AI Import
+                        </button>
+                        <button class="btn-add" id="addBikeBtn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 5v14M5 12h14"/>
+                            </svg>
+                            Add Manual
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="bikes-list" id="bikesList">
+                    <div class="empty-state" id="emptyState">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <circle cx="5" cy="17" r="3"/>
+                            <circle cx="19" cy="17" r="3"/>
+                            <path d="M5 17h4l2-5h4l2 5h2"/>
+                            <path d="M9 12l2-5h2"/>
+                        </svg>
+                        <p>No motorcycles added yet</p>
+                        <span>Click "Add Bike" to start comparing</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Center Panel: Weights & Method -->
+            <section class="panel config-panel">
+                <div class="panel-header">
+                    <h2>Scoring Configuration</h2>
+                </div>
+
+                <!-- Method Selection -->
+                <div class="method-selector">
+                    <h3>Which method should I use?</h3>
+                    <div class="method-cards">
+                        <button class="method-card active" data-method="wsm">
+                            <span class="method-emoji">⭐</span>
+                            <span class="method-name">Best Overall</span>
+                            <span class="method-desc">Recommended for most</span>
+                        </button>
+                        <button class="method-card" data-method="vfm">
+                            <span class="method-emoji">💰</span>
+                            <span class="method-name">Best Value</span>
+                            <span class="method-desc">On a budget?</span>
+                        </button>
+                        <button class="method-card" data-method="topsis">
+                            <span class="method-emoji">🎯</span>
+                            <span class="method-name">Closest to Perfect</span>
+                            <span class="method-desc">Want the ideal bike</span>
+                        </button>
+                        <button class="method-card" data-method="ahp">
+                            <span class="method-emoji">🤔</span>
+                            <span class="method-name">Help Me Decide</span>
+                            <span class="method-desc">Not sure what matters</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Method Info -->
+                <div class="method-info" id="methodInfo">
+                    <div class="info-card">
+                        <div class="info-card-header">
+                            <span class="info-badge recommended">Recommended</span>
+                            <h4>⭐ Best Overall</h4>
+                        </div>
+                        <p class="info-simple"><strong>In simple words:</strong> "Add up all the good things about each bike, weighted by what matters to you."</p>
+                        <div class="info-example">
+                            <span class="example-label">Example:</span>
+                            If you care 50% about power and 50% about mileage, a bike with great power but poor mileage scores the same as one with great mileage but poor power.
+                        </div>
+                        <div class="info-best-for">
+                            <span>✓ Best for:</span> First-time buyers, general comparisons, when you know what you want
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Category Tabs -->
+                <div class="category-tabs">
+                    <button class="category-tab active" data-category="all">All</button>
+                    <button class="category-tab" data-category="price">💰 Price</button>
+                    <button class="category-tab" data-category="performance">⚡ Performance</button>
+                    <button class="category-tab" data-category="comfort">🛋️ Comfort</button>
+                    <button class="category-tab" data-category="safety">🛡️ Safety</button>
+                    <button class="category-tab" data-category="features">✨ Features</button>
+                </div>
+
+                <!-- Weights Configuration -->
+                <div class="weights-config">
+                    <div class="weights-header">
+                        <h3>Criteria Weights</h3>
+                        <div class="weights-actions">
+                            <button class="btn-reset" id="equalizeWeights">Equalize</button>
+                            <button class="btn-reset" id="resetWeights">Reset</button>
+                        </div>
+                    </div>
+                    <p class="weights-hint">Adjust importance levels (total: <span id="totalWeight">100</span>%)</p>
+                    
+                    <div class="weights-list" id="weightsList">
+                        <!-- Weights will be dynamically generated -->
+                    </div>
+                </div>
+
+                <!-- Compare Button -->
+                <button class="btn-compare" id="compareBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+                        <polyline points="22,4 12,14.01 9,11.01"/>
+                    </svg>
+                    Calculate Scores
+                </button>
+            </section>
+
+            <!-- Right Panel: Results -->
+            <section class="panel results-panel">
+                <div class="panel-header">
+                    <h2>Results</h2>
+                    <button class="btn-export" id="exportBtn" style="display:none;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+                        </svg>
+                        Export
+                    </button>
+                </div>
+                
+                <div class="results-container" id="resultsContainer">
+                    <div class="empty-state" id="resultsEmpty">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M12 20V10M18 20V4M6 20v-4"/>
+                        </svg>
+                        <p>No results yet</p>
+                        <span>Add bikes and click "Calculate Scores"</span>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- AI Import Modal -->
+    <div class="modal-overlay" id="aiModal">
+        <div class="modal modal-large">
+            <div class="modal-header">
+                <h3>🤖 AI Spec Importer</h3>
+                <button class="modal-close" id="closeAiModal">×</button>
+            </div>
+            <div class="ai-chat-container">
+                <div class="ai-instructions">
+                    <div class="ai-instruction-card">
+                        <h4>📋 How to use:</h4>
+                        <ol>
+                            <li>Go to <strong>BikeDekho</strong>, <strong>Autocar India</strong>, <strong>ZigWheels</strong>, or any bike website</li>
+                            <li>Copy the specifications section (Ctrl+C / Cmd+C)</li>
+                            <li>Paste it in the box below</li>
+                            <li>Click "Extract Specs" and we'll parse everything automatically!</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div class="ai-input-area">
+                    <label for="aiInput">Paste bike specifications here:</label>
+                    <textarea id="aiInput" placeholder="Example:
+Kawasaki Ninja ZX-6R Specifications
+
+Engine & Transmission
+Engine Type: 4-cylinder, 4-stroke, Liquid-cooled, DOHC
+Displacement: 636 cc
+Max Power: 130 PS @ 13500 rpm
+Max Torque: 70.8 Nm @ 11000 rpm
+
+Dimensions & Weight
+Kerb Weight: 196 kg
+Fuel Tank Capacity: 17 Litres
+Seat Height: 830 mm
+
+Brakes & Suspension
+Front Brake: Dual Disc
+Rear Brake: Disc
+ABS: Dual Channel
+
+Performance
+Top Speed: 257 kmph
+0-100 kmph: 3.2 seconds
+Mileage: 18 kmpl
+
+...just paste the full specs page content!"></textarea>
+                </div>
+                
+                <div class="ai-preview" id="aiPreview" style="display:none;">
+                    <h4>📊 Extracted Specifications:</h4>
+                    <div class="ai-preview-grid" id="aiPreviewGrid"></div>
+                </div>
+                
+                <div class="ai-actions">
+                    <button type="button" class="btn-cancel" id="cancelAiBtn">Cancel</button>
+                    <button type="button" class="btn-secondary" id="extractBtn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                            <polyline points="14,2 14,8 20,8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                        </svg>
+                        Extract Specs
+                    </button>
+                    <button type="button" class="btn-submit" id="addExtractedBtn" style="display:none;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                            <path d="M12 5v14M5 12h14"/>
+                        </svg>
+                        Add Motorcycle
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Bike Modal -->
+    <div class="modal-overlay" id="bikeModal">
+        <div class="modal modal-large">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add New Motorcycle</h3>
+                <button class="modal-close" id="closeModal">×</button>
+            </div>
+            <form id="bikeForm">
+                <input type="hidden" id="bikeId">
+                
+                <!-- Basic Info -->
+                <div class="form-section">
+                    <h4 class="form-section-title">🏍️ Basic Information</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="bikeName">Motorcycle Name *</label>
+                            <input type="text" id="bikeName" placeholder="e.g., Kawasaki Ninja ZX-6R" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="bikePrice">Price ($) *</label>
+                            <input type="number" id="bikePrice" placeholder="12000" min="0" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Engine & Performance -->
+                <div class="form-section">
+                    <h4 class="form-section-title">⚡ Engine & Performance</h4>
+                    <div class="form-row form-row-3">
+                        <div class="form-group">
+                            <label for="bikeEngine">Engine (cc)</label>
+                            <input type="number" id="bikeEngine" placeholder="636" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="bikeHorsepower">Horsepower (HP)</label>
+                            <input type="number" id="bikeHorsepower" placeholder="130" min="0" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label for="bikeTorque">Torque (Nm)</label>
+                            <input type="number" id="bikeTorque" placeholder="70" min="0" step="0.1">
+                        </div>
+                    </div>
+                    <div class="form-row form-row-3">
+                        <div class="form-group">
+                            <label for="bikeTopSpeed">Top Speed (km/h)</label>
+                            <input type="number" id="bikeTopSpeed" placeholder="260" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="bikeAcceleration">0-100 km/h (sec)</label>
+                            <input type="number" id="bikeAcceleration" placeholder="3.2" min="0" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label for="bikeMileage">Mileage (km/l)</label>
+                            <input type="number" id="bikeMileage" placeholder="22" min="0" step="0.1">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Physical Specs -->
+                <div class="form-section">
+                    <h4 class="form-section-title">📐 Physical Specifications</h4>
+                    <div class="form-row form-row-3">
+                        <div class="form-group">
+                            <label for="bikeWeight">Weight (kg)</label>
+                            <input type="number" id="bikeWeight" placeholder="196" min="0" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label for="bikeSeatHeight">Seat Height (mm)</label>
+                            <input type="number" id="bikeSeatHeight" placeholder="830" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="bikeFuelCapacity">Fuel Tank (L)</label>
+                            <input type="number" id="bikeFuelCapacity" placeholder="17" min="0" step="0.1">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Braking System -->
+                <div class="form-section">
+                    <h4 class="form-section-title">🛑 Braking System</h4>
+                    <div class="form-row form-row-3">
+                        <div class="form-group">
+                            <label for="bikeFrontBrake">Front Brake (1-10)</label>
+                            <input type="number" id="bikeFrontBrake" placeholder="8" min="1" max="10">
+                        </div>
+                        <div class="form-group">
+                            <label for="bikeRearBrake">Rear Brake (1-10)</label>
+                            <input type="number" id="bikeRearBrake" placeholder="7" min="1" max="10">
+                        </div>
+                        <div class="form-group">
+                            <label for="bikeABS">ABS Quality (1-10)</label>
+                            <input type="number" id="bikeABS" placeholder="9" min="0" max="10">
+                            <span class="form-hint">0 = No ABS</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Suspension -->
+                <div class="form-section">
+                    <h4 class="form-section-title">🔧 Suspension</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="bikeFrontSuspension">Front Suspension (1-10)</label>
+                            <input type="number" id="bikeFrontSuspension" placeholder="8" min="1" max="10">
+                        </div>
+                        <div class="form-group">
+                            <label for="bikeRearSuspension">Rear Suspension (1-10)</label>
+                            <input type="number" id="bikeRearSuspension" placeholder="8" min="1" max="10">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Comfort & Ergonomics -->
+                <div class="form-section">
+                    <h4 class="form-section-title">🛋️ Comfort & Ergonomics</h4>
+                    <div class="form-row form-row-3">
+                        <div class="form-group">
+                            <label for="bikeComfort">Seat Comfort (1-10)</label>
+                            <input type="number" id="bikeComfort" placeholder="7" min="1" max="10">
+                        </div>
+                        <div class="form-group">
+                            <label for="bikeErgonomics">Riding Position (1-10)</label>
+                            <input type="number" id="bikeErgonomics" placeholder="8" min="1" max="10">
+                        </div>
+                        <div class="form-group">
+                            <label for="bikeWindProtection">Wind Protection (1-10)</label>
+                            <input type="number" id="bikeWindProtection" placeholder="6" min="1" max="10">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Features & Technology -->
+                <div class="form-section">
+                    <h4 class="form-section-title">✨ Features & Technology</h4>
+                    <div class="form-row form-row-3">
+                        <div class="form-group">
+                            <label for="bikeInstrumentation">Instrumentation (1-10)</label>
+                            <input type="number" id="bikeInstrumentation" placeholder="8" min="1" max="10">
+                        </div>
+                        <div class="form-group">
+                            <label for="bikeLighting">Lighting System (1-10)</label>
+                            <input type="number" id="bikeLighting" placeholder="7" min="1" max="10">
+                        </div>
+                        <div class="form-group">
+                            <label for="bikeElectronics">Electronics/Modes (1-10)</label>
+                            <input type="number" id="bikeElectronics" placeholder="8" min="1" max="10">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="bikeBuildQuality">Build Quality (1-10)</label>
+                            <input type="number" id="bikeBuildQuality" placeholder="8" min="1" max="10">
+                        </div>
+                        <div class="form-group">
+                            <label for="bikeReliability">Reliability (1-10)</label>
+                            <input type="number" id="bikeReliability" placeholder="8" min="1" max="10">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn-cancel" id="cancelBtn">Cancel</button>
+                    <button type="submit" class="btn-submit">Save Motorcycle</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- AHP Modal -->
+    <div class="modal-overlay" id="ahpModal">
+        <div class="modal modal-wide">
+            <div class="modal-header">
+                <h3>AHP Pairwise Comparison</h3>
+                <button class="modal-close" id="closeAhpModal">×</button>
+            </div>
+            <div class="ahp-content">
+                <p class="ahp-instructions">Compare each pair of criteria. Select which is more important and by how much. Only comparing main categories for simplicity.</p>
+                <div class="ahp-comparisons" id="ahpComparisons">
+                    <!-- Pairwise comparisons will be generated here -->
+                </div>
+                <div class="ahp-actions">
+                    <button class="btn-cancel" id="cancelAhpBtn">Cancel</button>
+                    <button class="btn-submit" id="applyAhpBtn">Apply Weights</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
