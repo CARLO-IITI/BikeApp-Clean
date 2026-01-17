@@ -6,14 +6,22 @@
 
 // ===== Criteria Configuration =====
 const CRITERIA = {
-    // Price
+    // Price & Cost
     price: { 
         name: 'Price', 
         icon: '💰', 
         category: 'price',
         lowerIsBetter: true, 
         unit: '$',
-        defaultWeight: 15
+        defaultWeight: 12
+    },
+    serviceCost: { 
+        name: 'Service Cost', 
+        icon: '🔧', 
+        category: 'price',
+        lowerIsBetter: true, 
+        unit: '$/yr',
+        defaultWeight: 8
     },
     
     // Performance
@@ -565,6 +573,7 @@ function openBikeModal(bikeId = null) {
             const fieldMappings = {
                 'bikeName': 'name',
                 'bikePrice': 'price',
+                'bikeServiceCost': 'serviceCost',
                 'bikeEngine': 'engine',
                 'bikeHorsepower': 'horsepower',
                 'bikeTorque': 'torque',
@@ -625,6 +634,7 @@ function handleBikeSubmit(e) {
         id: elements.bikeId.value || generateId(),
         name: document.getElementById('bikeName').value.trim(),
         price: getVal('bikePrice'),
+        serviceCost: getVal('bikeServiceCost'),
         engine: getVal('bikeEngine'),
         horsepower: getVal('bikeHorsepower'),
         torque: getVal('bikeTorque'),
@@ -1138,6 +1148,8 @@ function formatValue(value, criterion) {
     switch (criterion) {
         case 'price':
             return `$${value.toLocaleString()}`;
+        case 'serviceCost':
+            return `$${value}/yr`;
         case 'weight':
             return `${value}kg`;
         case 'engine':
@@ -1262,6 +1274,12 @@ function parseSpecsFromText(text) {
             /(?:Price|Ex-showroom|On-Road|Cost)\s*[:\-]?\s*(?:Rs\.?|₹|INR)?\s*([\d,]+(?:\.\d+)?)\s*(?:Lakh|L|Lac)?/i,
             /(?:Rs\.?|₹|INR)\s*([\d,]+(?:\.\d+)?)\s*(?:Lakh|L|Lac)?/i,
             /\$([\d,]+)/
+        ],
+        
+        // Service Cost
+        serviceCost: [
+            /(?:Service\s*Cost|Maintenance\s*Cost|Annual\s*Service|Yearly\s*Service)\s*[:\-]?\s*(?:Rs\.?|₹|INR|\$)?\s*([\d,]+)/i,
+            /(?:Service\s*Interval)\s*[:\-]?\s*(\d+)\s*(?:km|months)/i
         ],
         
         // Engine
@@ -1430,6 +1448,7 @@ function renderExtractedPreview() {
     const specLabels = {
         name: 'Bike Name',
         price: 'Price',
+        serviceCost: 'Service Cost/yr',
         engine: 'Engine (cc)',
         horsepower: 'Horsepower',
         torque: 'Torque (Nm)',
@@ -1449,7 +1468,7 @@ function renderExtractedPreview() {
         electronics: 'Electronics'
     };
     
-    const orderedKeys = ['name', 'price', 'engine', 'horsepower', 'torque', 'topSpeed', 'acceleration', 
+    const orderedKeys = ['name', 'price', 'serviceCost', 'engine', 'horsepower', 'torque', 'topSpeed', 'acceleration', 
                          'mileage', 'weight', 'fuelCapacity', 'seatHeight', 'frontBrake', 'rearBrake', 
                          'abs', 'frontSuspension', 'rearSuspension', 'lighting', 'instrumentation', 'electronics'];
     
@@ -1469,6 +1488,8 @@ function renderExtractedPreview() {
                 displayValue = value >= 100000 
                     ? `₹${(value / 100000).toFixed(2)} Lakh` 
                     : `$${value.toLocaleString()}`;
+            } else if (key === 'serviceCost') {
+                displayValue = `$${value.toLocaleString()}/yr`;
             } else if (key === 'name') {
                 displayValue = value;
             } else if (['frontBrake', 'rearBrake', 'abs', 'frontSuspension', 'rearSuspension', 
@@ -1508,6 +1529,7 @@ function addExtractedBike() {
         id: generateId(),
         name: extractedBikeData.name,
         price: extractedBikeData.price || null,
+        serviceCost: extractedBikeData.serviceCost || null,
         engine: extractedBikeData.engine || null,
         horsepower: extractedBikeData.horsepower || null,
         torque: extractedBikeData.torque || null,
