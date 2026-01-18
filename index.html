@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BikeScore — Complete Motorcycle Comparison</title>
+    <meta name="description" content="Compare motorcycles using advanced scoring methods. Make data-driven decisions for your next bike purchase.">
+    <meta name="theme-color" content="#0a0c10">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -22,6 +26,7 @@
                     <circle cx="12" cy="7" r="1.5"/>
                 </svg>
                 <span class="logo-text">BikeScore</span>
+                <span class="version-badge">v2.0</span>
             </div>
             <p class="tagline">Complete Motorcycle Comparison Tool — All Specs, All Methods</p>
         </header>
@@ -61,6 +66,20 @@
                         <p>No motorcycles added yet</p>
                         <span>Click "Add Bike" to start comparing</span>
                     </div>
+                </div>
+
+                <!-- Share URL Section -->
+                <div class="share-section" id="shareSection" style="display:none;">
+                    <button class="btn-share" id="shareBtn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="18" cy="5" r="3"/>
+                            <circle cx="6" cy="12" r="3"/>
+                            <circle cx="18" cy="19" r="3"/>
+                            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                        </svg>
+                        Share Comparison
+                    </button>
                 </div>
             </section>
 
@@ -125,16 +144,44 @@
                     <button class="category-tab" data-category="features">✨ Features</button>
                 </div>
 
+                <!-- Weight Templates -->
+                <div class="weight-templates">
+                    <label for="templateSelect">Quick Templates:</label>
+                    <select id="templateSelect" class="template-select">
+                        <option value="">— Select a preset —</option>
+                        <option value="speedLover">🏎️ Speed Lover</option>
+                        <option value="dailyCommuter">🛵 Daily Commuter</option>
+                        <option value="budgetBuyer">💵 Budget Buyer</option>
+                        <option value="longRider">🛣️ Long Distance Rider</option>
+                        <option value="safetyFirst">🛡️ Safety First</option>
+                        <option value="allRounder">⚖️ All-Rounder</option>
+                        <option value="trackDay">🏁 Track Day Enthusiast</option>
+                        <option value="newRider">🔰 New Rider</option>
+                    </select>
+                </div>
+
                 <!-- Weights Configuration -->
                 <div class="weights-config">
                     <div class="weights-header">
                         <h3>Criteria Weights</h3>
                         <div class="weights-actions">
+                            <button class="btn-fix" id="fixTo100" title="Proportionally scale all weights to sum 100%">Fix to 100%</button>
                             <button class="btn-reset" id="equalizeWeights">Equalize</button>
                             <button class="btn-reset" id="resetWeights">Reset</button>
                         </div>
                     </div>
-                    <p class="weights-hint">Adjust importance levels (total: <span id="totalWeight">100</span>%)</p>
+                    
+                    <!-- Weight Guidance -->
+                    <div class="weight-guidance" id="weightGuidance">
+                        <div class="weight-progress">
+                            <div class="weight-progress-bar" id="weightProgressBar"></div>
+                        </div>
+                        <p class="weights-hint">
+                            Total: <span id="totalWeight" class="weight-total">100</span>%
+                            <span id="weightStatus" class="weight-status"></span>
+                        </p>
+                        <p class="weight-tip" id="weightTip"></p>
+                    </div>
                     
                     <div class="weights-list" id="weightsList">
                         <!-- Weights will be dynamically generated -->
@@ -155,12 +202,52 @@
             <section class="panel results-panel">
                 <div class="panel-header">
                     <h2>Results</h2>
-                    <button class="btn-export" id="exportBtn" style="display:none;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
-                        </svg>
-                        Export
-                    </button>
+                    <div class="results-actions" style="display:none;" id="resultsActions">
+                        <button class="btn-toggle" id="showMathBtn" title="Show calculation details">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 6h16M4 12h16M4 18h7"/>
+                            </svg>
+                            Show Math
+                        </button>
+                        <button class="btn-toggle" id="radarChartBtn" title="Toggle radar chart">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="12,2 22,8.5 22,15.5 12,22 2,15.5 2,8.5"/>
+                                <line x1="12" y1="2" x2="12" y2="22"/>
+                                <line x1="2" y1="8.5" x2="22" y2="15.5"/>
+                                <line x1="22" y1="8.5" x2="2" y2="15.5"/>
+                            </svg>
+                            Chart
+                        </button>
+                        <button class="btn-toggle" id="compareTableBtn" title="Side-by-side comparison">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                                <line x1="12" y1="3" x2="12" y2="21"/>
+                                <line x1="3" y1="9" x2="21" y2="9"/>
+                                <line x1="3" y1="15" x2="21" y2="15"/>
+                            </svg>
+                            Table
+                        </button>
+                        <button class="btn-export" id="exportBtn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+                            </svg>
+                            Export
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Radar Chart Container -->
+                <div class="radar-chart-container" id="radarChartContainer" style="display:none;">
+                    <canvas id="radarChart" width="400" height="300"></canvas>
+                </div>
+                
+                <!-- Comparison Table -->
+                <div class="comparison-table-container" id="comparisonTableContainer" style="display:none;">
+                    <div class="comparison-table-wrapper">
+                        <table class="comparison-table" id="comparisonTable">
+                            <!-- Generated dynamically -->
+                        </table>
+                    </div>
                 </div>
                 
                 <div class="results-container" id="resultsContainer">
@@ -174,6 +261,15 @@
                 </div>
             </section>
         </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Made with 🏍️ for motorcycle enthusiasts</p>
+            <div class="footer-links">
+                <button id="importDataBtn">Import Data</button>
+                <button id="exportDataBtn">Export All Data</button>
+            </div>
+        </footer>
     </div>
 
     <!-- AI Import Modal -->
@@ -280,6 +376,11 @@ Mileage: 18 kmpl
                             <label for="bikeServiceCost">Annual Service Cost ($)</label>
                             <input type="number" id="bikeServiceCost" placeholder="500" min="0">
                             <span class="form-hint">Yearly maintenance + parts cost</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="bikeImageUrl">Image URL (optional)</label>
+                            <input type="url" id="bikeImageUrl" placeholder="https://...">
+                            <span class="form-hint">Link to bike image</span>
                         </div>
                     </div>
                 </div>
@@ -447,7 +548,77 @@ Mileage: 18 kmpl
         </div>
     </div>
 
+    <!-- Seat Height Preference Modal -->
+    <div class="modal-overlay" id="seatHeightModal">
+        <div class="modal modal-small">
+            <div class="modal-header">
+                <h3>📏 Seat Height Preference</h3>
+                <button class="modal-close" id="closeSeatHeightModal">×</button>
+            </div>
+            <div class="seat-height-content">
+                <p>How do you prefer seat height?</p>
+                <div class="seat-height-options">
+                    <button class="seat-option" data-value="lower">
+                        <span class="seat-icon">⬇️</span>
+                        <span class="seat-label">Lower is Better</span>
+                        <span class="seat-desc">Easier to put feet down</span>
+                    </button>
+                    <button class="seat-option" data-value="higher">
+                        <span class="seat-icon">⬆️</span>
+                        <span class="seat-label">Higher is Better</span>
+                        <span class="seat-desc">Better ground clearance</span>
+                    </button>
+                    <button class="seat-option" data-value="ignore">
+                        <span class="seat-icon">↔️</span>
+                        <span class="seat-label">Don't Care</span>
+                        <span class="seat-desc">Ignore in scoring</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Share Modal -->
+    <div class="modal-overlay" id="shareModal">
+        <div class="modal modal-small">
+            <div class="modal-header">
+                <h3>🔗 Share Comparison</h3>
+                <button class="modal-close" id="closeShareModal">×</button>
+            </div>
+            <div class="share-content">
+                <p>Copy this link to share your comparison:</p>
+                <div class="share-url-container">
+                    <input type="text" id="shareUrl" readonly>
+                    <button id="copyShareUrl" class="btn-copy">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                            <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+                        </svg>
+                    </button>
+                </div>
+                <p class="share-note">This link includes all your bikes and weight settings.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Data Modal -->
+    <div class="modal-overlay" id="importModal">
+        <div class="modal modal-small">
+            <div class="modal-header">
+                <h3>📥 Import Data</h3>
+                <button class="modal-close" id="closeImportModal">×</button>
+            </div>
+            <div class="import-content">
+                <p>Paste your exported JSON data:</p>
+                <textarea id="importData" placeholder='{"bikes": [...], "weights": {...}}'></textarea>
+                <div class="import-actions">
+                    <button class="btn-cancel" id="cancelImportBtn">Cancel</button>
+                    <button class="btn-submit" id="confirmImportBtn">Import</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="app.js"></script>
 </body>
 </html>
-<!-- Cache bust: Sun Jan 18 10:05:30 IST 2026 -->
